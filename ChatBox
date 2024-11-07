@@ -1,0 +1,190 @@
+package javaapplication1;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+
+public class ChatBox {
+
+    class User {
+        protected String username;
+        protected String Gmail;
+        protected String password;
+
+        public User(String username, String Gmail, String password) {
+            this.username = username;
+            this.Gmail = Gmail;
+            this.password = password;
+        }
+
+        public boolean authenticate(String username, String password, String Gmail) {
+            return this.username.equals(username) && this.password.equals(password) && this.Gmail.equals(Gmail);
+        }
+
+        public void displayRole() {
+            System.out.println("Generic User");
+        }
+    }
+
+    class Admin extends User {
+        public Admin(String username, String Gmail, String password) {
+            super(username, Gmail, password);
+        }
+
+        @Override
+        public void displayRole() {
+            System.out.println("Admin Role");
+        }
+    }
+
+    class Student extends User {
+        public Student(String username, String Gmail, String password) {
+            super(username, Gmail, password);
+        }
+
+        @Override
+        public void displayRole() {
+            System.out.println("Student Role");
+        }
+    }
+
+    class Faculty extends User {
+        public Faculty(String username, String Gmail, String password) {
+            super(username, Gmail, password);
+        }
+
+        @Override
+        public void displayRole() {
+            System.out.println("Faculty Role");
+        }
+    }
+
+    public class ChatAppStartMenu {
+
+        public ChatAppStartMenu() {
+            JFrame frame = new JFrame("Chat Application - Start Menu");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(500, 400);
+            frame.setLayout(new BorderLayout());
+
+            JLabel label = new JLabel("Please select your role to proceed:", JLabel.LEFT);
+            label.setFont(new Font("Arial", Font.PLAIN, 18));
+
+            JButton adminButton = new JButton("Admin");
+            JButton studentButton = new JButton("Student");
+            JButton facultyButton = new JButton("Faculty");
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new GridLayout(3, 1, 10, 10)); // 3 rows, 1 column
+            buttonPanel.add(adminButton);
+            buttonPanel.add(studentButton);
+            buttonPanel.add(facultyButton);
+
+            adminButton.addActionListener((ActionEvent e) -> {
+                showLoginSignup("Admin");
+            });
+
+            studentButton.addActionListener((ActionEvent e) -> {
+                showLoginSignup("Student");
+            });
+
+            facultyButton.addActionListener((ActionEvent e) -> {
+                showLoginSignup("Faculty");
+            });
+
+            frame.add(label, BorderLayout.NORTH);
+            frame.add(buttonPanel, BorderLayout.CENTER);
+
+            frame.setVisible(true);
+        }
+
+        private void showLoginSignup(String role) {
+            JFrame frame = new JFrame(role + " Login / Signup");
+            frame.setSize(400, 300);
+            frame.setLayout(new GridLayout(5, 1, 10, 10));
+
+            JLabel label = new JLabel(role + " - Choose an option", JLabel.LEFT);
+            frame.add(label);
+
+            JButton loginButton = new JButton("Login");
+            frame.add(loginButton);
+
+            JButton signupButton = new JButton("Signup");
+            frame.add(signupButton);
+
+            loginButton.addActionListener((ActionEvent e) -> {
+                showLoginDialog(role);
+            });
+
+            signupButton.addActionListener((ActionEvent e) -> {
+                showSignupDialog(role);
+            });
+
+            frame.setVisible(true);
+        }
+
+        private void showLoginDialog(String role) {
+            JTextField usernameField = new JTextField(15);
+            JPasswordField passwordField = new JPasswordField(15);
+
+            JPanel loginPanel = new JPanel(new GridLayout(3, 2));
+            loginPanel.add(new JLabel("Username:"));
+            loginPanel.add(usernameField);
+            loginPanel.add(new JLabel("Password:"));
+            loginPanel.add(passwordField);
+
+            int option = JOptionPane.showConfirmDialog(null, loginPanel, role + " Login", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                User user = null;
+                if (role.equals("Admin")) {
+                    user = new Admin("admin", "admin@gmail.com", "admin123");
+                } else if (role.equals("Student")) {
+                    user = new Student("student", "student@gmail.com", "student123");
+                } else if (role.equals("Faculty")) {
+                    user = new Faculty("faculty", "faculty@gmail.com", "faculty123");
+                }
+
+                if (user != null && user.authenticate(username, password, role.equals("Admin") ? "admin@gmail.com" : (role.equals("Student") ? "student@gmail.com" : "faculty@gmail.com"))) {
+                    JOptionPane.showMessageDialog(null, "Login Successful! Welcome " + role);
+                    user.displayRole();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid Username or Password!");
+                }
+            }
+        }
+
+        private void showSignupDialog(String role) {
+            JTextField usernameField = new JTextField(15);
+            JTextField GmailField = new JTextField(15);
+            JPasswordField passwordField = new JPasswordField(15);
+
+            JPanel signupPanel = new JPanel(new GridLayout(3, 2));
+            signupPanel.add(new JLabel("Username:"));
+            signupPanel.add(usernameField);
+
+            signupPanel.add(new JLabel("Gmail:"));
+            signupPanel.add(GmailField);
+
+            signupPanel.add(new JLabel("Password:"));
+            signupPanel.add(passwordField);
+
+            int option = JOptionPane.showConfirmDialog(null, signupPanel, role + " Signup", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                String username = usernameField.getText();
+                String Gmail = GmailField.getText();
+                JOptionPane.showMessageDialog(null, "Signup Successful! Welcome " + role);
+                System.out.println(role + " " + username + " has signed up with Gmail: " + Gmail);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ChatBox chatBox = new ChatBox();
+        chatBox.new ChatAppStartMenu();
+    }
+}
